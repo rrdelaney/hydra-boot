@@ -1,0 +1,64 @@
+# A registered user
+type User {
+  # Unique id for the user
+  id: ID!
+  # Name of the user
+  name: String!
+  # All posts that they have made
+  articles: [Article!]!
+}
+
+# A post on a topic
+type Article {
+  # Unique id for a post
+  id: ID!
+  # Article's title
+  title: String!
+  # Article's content
+  content: String!
+  # Where the post was made
+  community: Community!
+  # Article's author
+  author: User!
+}
+
+# A community of posts and users
+type Community {
+  # Unique id for a community
+  id: ID!
+  # Community's proper name
+  name: String!
+  # Articles in a community
+  articles(offset: Int, limit: Int): [Article!]!
+  # Issues published in a community
+  issues(offset: Int, limit: Int): [Issue!]!
+}
+
+# A published issue from a community consisting of posts
+type Issue {
+  # Unique id given to the issue
+  id: ID!
+  # Headline for the issue
+  headline: String!
+  # Date of publication
+  published: String!
+  # All posts in a given issue
+  articles: [Article!]!
+  # Community the issue was published in
+  community: Community!
+}
+
+type Query {
+  # Information about the current user
+  self: User
+  # Find a user by id
+  user(id: ID!): User
+  # Find a post by id
+  article(id: ID!): Article
+  # Find a community by id
+  community(id: ID!): Community
+}
+
+schema {
+  query: Query
+}

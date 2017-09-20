@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Can render 1`] = `
+<Name
+  name="ryan"
+>
+  <Header
+    as="h2"
+  >
+    <h2
+      className="ui header"
+    >
+      Hello 
+      ryan
+      !!
+    </h2>
+  </Header>
+</Name>
+`;

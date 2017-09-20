@@ -1,0 +1,12 @@
+[ignore]
+.*/node_modules/styled-components/.*
+.*/node_modules/react-apollo/.*
+.*/node_modules/apollo-client/.*
+.*/node_modules/apollo-link-core/.*
+[include]
+
+[libs]
+
+[lints]
+
+[options]

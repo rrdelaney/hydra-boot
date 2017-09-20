@@ -1,0 +1,6 @@
+{
+  "name": "jest-preset-hydra",
+  "version": "1.0.0",
+  "main": "jest-config.json",
+  "license": "MIT"
+}
