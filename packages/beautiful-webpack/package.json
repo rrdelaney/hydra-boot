@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "boxen": "^1.2.1"
+    "boxen": "^1.2.1",
+    "chalk": "^2.1.0"
   }
 }

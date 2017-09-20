@@ -3,15 +3,12 @@
   "private": true,
   "workspaces": [
     "packages/babel-preset-hydra",
-    "paackages/beautiful-webpack",
+    "packages/beautiful-webpack",
     "packages/hydra-boot",
     "packages/hydra-example",
     "packages/hydra-log",
     "packages/hydra-webpack-config",
     "packages/jest-preset-hydra",
     "packages/render-stream"
-  ],
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+  ]
 }
