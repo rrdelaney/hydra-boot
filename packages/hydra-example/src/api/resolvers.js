@@ -21,9 +21,7 @@ export const Query = {
   },
 
   self(root: mixed, args: mixed, c: Context) {
-    if (c.user === null) return
-
-    return c.userById(c.user.id)
+    return c.userById('1')
   }
 }
 

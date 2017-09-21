@@ -15,6 +15,7 @@ const app = hydraBoot(() => require(serverModule))
 
 if (app.isProduction()) app.express.use(compression())
 
+app.express.use(bodyParser.json())
 app.express.use('/graphql', (...handler) => {
   const { handleGraphQL, handleError } = require(serverModule)
 

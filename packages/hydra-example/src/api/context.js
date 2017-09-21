@@ -29,53 +29,78 @@ export type Issue = {
 }
 
 export default class Context {
-  db: any
-  user: { id: string, name: string } | null
-
-  constructor(db: any, user: { id: string, name: string } | null) {
-    this.user = user
-    this.db = db
+  async userById(id: string): Promise<User> {
+    return { id: '1', name: 'Ryan Delaney' }
   }
 
-  userById(id: string): Promise<User> {
-    return this.db.users.findOne({ id })
+  async articlesByUser(id: string): Promise<Article[]> {
+    return [
+      {
+        id: 1,
+        title: 'Hello world',
+        content: 'hello world',
+        community_id: 'Heyyy',
+        author_id: '1'
+      }
+    ]
   }
 
-  articlesByUser(id: string): Promise<Article[]> {
-    return this.db.articles.find({ author_id: id })
+  async articleById(id: number): Promise<Article> {
+    return {
+      id: 1,
+      title: 'Hello world',
+      content: 'hello world',
+      community_id: 'Heyyy',
+      author_id: '1'
+    }
   }
 
-  articleById(id: number): Promise<Article> {
-    return this.db.articles.findOne({ id })
-  }
-
-  articlesByCommunity(
+  async articlesByCommunity(
     id: string,
     offset?: number,
     limit?: number
   ): Promise<Article[]> {
-    return this.db.articles.find(
-      { community_id: id },
-      { offset, limit, order: 'published' }
-    )
+    return [
+      {
+        id: 1,
+        title: 'Hello world',
+        content: 'hello world',
+        community_id: 'c',
+        author_id: '1'
+      }
+    ]
   }
 
-  communityById(id: string): Promise<Community> {
-    return this.db.communities.findOne({ id })
+  async communityById(id: string): Promise<Community> {
+    return {
+      id: 'c',
+      name: 'C'
+    }
   }
 
-  issueById(id: string): Promise<Issue> {
-    return this.db.issues.findOne({ id })
+  async issueById(id: string): Promise<Issue> {
+    return {
+      id: 1,
+      headline: 'Hey!',
+      published: new Date(),
+      article_ids: [1],
+      community_id: 'c'
+    }
   }
 
-  issuesByCommunity(
+  async issuesByCommunity(
     id: string,
     offset?: number,
     limit?: number
   ): Promise<Issue[]> {
-    return this.db.issues.find(
-      { community_id: id },
-      { offset, limit, order: 'published' }
-    )
+    return [
+      {
+        id: 1,
+        headline: 'Hey!',
+        published: new Date(),
+        article_ids: [1],
+        community_id: 'c'
+      }
+    ]
   }
 }

@@ -81,33 +81,34 @@ type RenderableProps<T> = {
 class RenderStream /*:: <T> */ {
   /*::
   renderer: Emitable
-  */
-
-  callbacks /*: {
+  locals: *
+  localsResolvers: { [prop: string]: () => void }
+  callbacks: {
     end: Array<() => void>,
     data: Array<(data: string) => void>
-  } */ = {
-    end: [],
-    data: []
   }
-
-  localsResolvers /*: { [prop: string]: () => void } */ = {}
-
-  locals = new Proxy(
-    {},
-    {
-      get: (target, name: string) => {
-        if (target[name]) return target[name]
-
-        return new Promise(resolve => {
-          this.localsResolvers[name] = () => resolve(target[name])
-        })
-      }
-    }
-  )
+  */
 
   constructor(renderFn /*: (props: RenderableProps<T>) => Emitable */) {
+    this.locals = new Proxy(
+      {},
+      {
+        get: (target, name) => {
+          if (target[name]) return target[name]
+
+          return new Promise(resolve => {
+            this.localsResolvers[name] = () => resolve(target[name])
+          })
+        }
+      }
+    )
+
     this.renderer = renderFn({ render, handler, flush, locals: this.locals })
+    this.localsResolvers = {}
+    this.callbacks = {
+      end: [],
+      data: []
+    }
   }
 
   start() {

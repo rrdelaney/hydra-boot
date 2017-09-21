@@ -41,25 +41,6 @@ function createApp(serverConfig /*: AppConfig */) /*: HydraApp */ {
 
   const logErr = err => console.error(chalk.red(`==> ${err}`))
 
-  app.use((...handler) => {
-    const { handleRequest, handleError } = serverConfig()
-
-    handleRequest(...handler).catch(e => {
-      handleError(e, ...handler)
-    })
-  })
-
-  app.use((
-    err /*: ?Error */,
-    req /*: $Request */,
-    res /*: $Response */,
-    next /*: NextFunction */
-  ) => {
-    const { handleError } = serverConfig()
-
-    if (err) handleError(err, req, res, next)
-  })
-
   const bootWebpack = (webpackConfig /*: ?any */) => {
     if (!IS_PRODUCTION) {
       const webpack = require('webpack')
@@ -103,6 +84,25 @@ function createApp(serverConfig /*: AppConfig */) /*: HydraApp */ {
   }
 
   const start = () => {
+    app.use((...handler) => {
+      const { handleRequest, handleError } = serverConfig()
+
+      handleRequest(...handler).catch(e => {
+        handleError(e, ...handler)
+      })
+    })
+
+    app.use((
+      err /*: ?Error */,
+      req /*: $Request */,
+      res /*: $Response */,
+      next /*: NextFunction */
+    ) => {
+      const { handleError } = serverConfig()
+
+      if (err) handleError(err, req, res, next)
+    })
+
     app.listen(PORT, () => {
       logMsg(`Listening at port ${PORT}`)
     })

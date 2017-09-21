@@ -11,32 +11,17 @@ import { StaticRouter } from 'react-router-dom'
 import log from 'hydra-log'
 import createPage from './page'
 import configureServerClient from './apollo/configureServerClient'
-import _db from './api/db'
 import schema from './api/schema'
 import Context from './api/context'
 import App from './components/App'
 import configureStore from './store'
 import { login } from './store/actions'
 
-export async function registerUser(profile: {
-  id: string,
-  displayName: string
-}) {
-  const db = await _db
-  const user = await db.users.findOne({ id: profile.id })
-
-  if (!user) {
-    return db.users.insert({ id: profile.id, name: profile.displayName })
-  } else {
-    return user
-  }
-}
-
 export async function handleGraphQL(
   ...handler: [$Request, $Response, NextFunction]
 ) {
   const [req] = handler
-  const context = new Context(await _db, serializeUser(req))
+  const context = new Context()
 
   return graphqlExpress({ schema, context })(...handler)
 }
@@ -52,14 +37,11 @@ export async function handleRequest(req: $Request, res: $Response) {
     res.status(200)
     res.write(head)
 
-    const user = serializeUser(req)
-    const context = new Context(await _db, user)
+    const context = new Context()
     const store = configureStore()
     const client = configureServerClient(context)
     const sheet = new ServerStyleSheet()
     const routerContext: { url?: string } = {}
-
-    if (user) store.dispatch(login(user))
 
     const app = (
       <StaticRouter location={req.url} context={routerContext}>
@@ -112,14 +94,6 @@ function getAssets(res: any): string[] {
   } else {
     return [].concat(res.locals.webpackStats.toJson().assetsByChunkName.main)
   }
-}
-
-function serializeUser(req): { id: string, name: string } | null {
-  ;(req: any)
-
-  if (!req.user) return null
-
-  return (req.user: any)
 }
 
 function getInitialState(store, client): string {

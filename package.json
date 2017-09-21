@@ -4,6 +4,7 @@
   "workspaces": [
     "packages/babel-preset-hydra",
     "packages/beautiful-webpack",
+    "packages/eslint-config-hydra",
     "packages/hydra-boot",
     "packages/hydra-example",
     "packages/hydra-log",

@@ -2,5 +2,9 @@
   "name": "jest-preset-hydra",
   "version": "1.0.0",
   "main": "jest-config.json",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "babel-jest": "^21.0.2",
+    "enzyme-to-json": "^1.5.1"
+  }
 }
