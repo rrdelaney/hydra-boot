@@ -6,28 +6,27 @@ require('dotenv').config()
 
 const { PORT = '3000' } = process.env
 
+const path = require('path')
 const express = require('express')
+const morgan = require('morgan')
 const chalk = require('chalk')
-/*:: import type { $Application, $Request, $Response, NextFunction } from 'express' */
+/*:: import type { $Application, $Request, $Response, NextFunction, Middleware } from 'express' */
 
 /*::
-type AppConfig = {
-  handleRequest(req: $Request, res: $Response): void | Promise<void>,
+type AppConfig = () => {
+  handleRequest(req: $Request, res: $Response): Promise<void>,
   handleError(
    err: Error,
    req: $Request,
    res: $Response,
    next: NextFunction
- ): void | Promise<void>
+ ): Promise<void>
 }
 
-type Handler = (req: $Request, res: $Response, next: NextFunction) => any
-
 type HydraApp = {
-  app: $Application,
+  express: $Application,
   bootWebpack(config: any): void,
-  handle(route: string, handler: Handler): void,
-  use(handler: Handler): void,
+  handle(route: string, handler: Middleware): void,
   start(): void,
   isProduction(): boolean,
   logMsg(msg: string): void,
@@ -35,19 +34,38 @@ type HydraApp = {
 }
 */
 
-function createApp(config /*: AppConfig */) /*: HydraApp */ {
+function createApp(serverConfig /*: AppConfig */) /*: HydraApp */ {
   const app = express()
 
   const logMsg = msg => console.log(chalk.cyan(`==> ${msg}`))
 
-  const logErr = msg => console.error(chalk.red(`==> ${err}`))
+  const logErr = err => console.error(chalk.red(`==> ${err}`))
 
-  const bootWebpack = config => {
+  app.use((...handler) => {
+    const { handleRequest, handleError } = serverConfig()
+
+    handleRequest(...handler).catch(e => {
+      handleError(e, ...handler)
+    })
+  })
+
+  app.use((
+    err /*: ?Error */,
+    req /*: $Request */,
+    res /*: $Response */,
+    next /*: NextFunction */
+  ) => {
+    const { handleError } = serverConfig()
+
+    if (err) handleError(err, req, res, next)
+  })
+
+  const bootWebpack = (webpackConfig /*: ?any */) => {
     if (IS_PRODUCTION) {
       const webpack = require('webpack')
       const webpackDevMiddleware = require('webpack-dev-middleware')
       const webpackHotMiddleware = require('webpack-hot-middleware')
-      const webpackConfig = require('./scripts/webpack.config.dev')
+      webpackConfig = webpackConfig || require('hydra-webpack-config')
 
       const compiler = webpack(webpackConfig)
       app.use(
@@ -67,7 +85,11 @@ function createApp(config /*: AppConfig */) /*: HydraApp */ {
       const assets = [stats['main.js']]
 
       app.use(express.static('build'))
-      app.use((req, res, next) => {
+      app.use((
+        req /*: $Request */,
+        res /*: $Response */,
+        next /*: NextFunction */
+      ) => {
         res.locals.assets = assets
         next()
       })
@@ -76,7 +98,9 @@ function createApp(config /*: AppConfig */) /*: HydraApp */ {
 
   const isProduction = () => IS_PRODUCTION
 
-  const use = middleware => app.use(middleware)
+  const handle = (route, handler) => {
+    app.use(route, handler)
+  }
 
   const start = () => {
     app.listen(PORT, () => {
@@ -107,12 +131,14 @@ function createApp(config /*: AppConfig */) /*: HydraApp */ {
   }
 
   return {
-    app,
+    express: app,
     bootWebpack,
-    use,
+    handle,
     start,
     isProduction,
     logMsg,
     logErr
   }
 }
+
+module.exports = createApp

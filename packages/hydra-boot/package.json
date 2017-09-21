@@ -8,6 +8,7 @@
     "dotenv": "^4.0.0"
   },
   "devDependencies": {
+    "hydra-webpack-config": "1.0.0",
     "babel-register": "^6.26.0",
     "gaze": "^1.1.2",
     "webpack": "^3.5.6",

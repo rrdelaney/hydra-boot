@@ -3,6 +3,8 @@
 .*/node_modules/react-apollo/.*
 .*/node_modules/apollo-client/.*
 .*/node_modules/apollo-link-core/.*
+.*/node_modules/graphql/.*
+.*/node_modules/graphql-tag/.*
 [include]
 
 [libs]
@@ -10,3 +12,4 @@
 [lints]
 
 [options]
+module.ignore_non_literal_requires=true

@@ -6,10 +6,16 @@ const openBrowser = require('react-dev-utils/openBrowser')
 const clearConsole = require('react-dev-utils/clearConsole')
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages')
 
-const isInteractive = process.stdout.isTTY
+const isInteractive = process.stdout.isTTY ? process.stdout.isTTY : false
 
 module.exports = class BeautifulWebpack {
-  constructor(app, address) {
+  /*::
+  app: string
+  address: string
+  hasShownInstructions: boolean
+  */
+
+  constructor(app /*: string */, address /*: string */) {
     this.app = app
     this.address = address
     this.hasShownInstructions = false
@@ -31,7 +37,7 @@ To create a production build, run ${chalk.yellow('yarn build')}.
     )
   }
 
-  apply(compiler) {
+  apply(compiler /*: any */) {
     compiler.plugin('after-plugins', () => {
       if (isInteractive) {
         clearConsole()

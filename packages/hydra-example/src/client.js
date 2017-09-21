@@ -11,12 +11,6 @@ let root
 let store
 let client
 
-if (window.SENTRY_DSN) {
-  import(/* webpackChunkName: "raven" */ 'raven-js').then(Raven => {
-    console.log(Raven)
-  })
-}
-
 window.onPageLoad =
   window.onPageLoad ||
   new Promise(resolve => {

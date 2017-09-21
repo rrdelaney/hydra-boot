@@ -1,7 +1,7 @@
 // @flow
 
 import massive from 'massive'
-import log from '../log'
+import log from 'hydra-log'
 
 export default massive(process.env.DATABASE_URL, undefined, {
   query(e) {
