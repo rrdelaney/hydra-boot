@@ -30,4 +30,6 @@ app.express.use(
   })
 )
 
+app.bootWebpack()
+
 app.start()

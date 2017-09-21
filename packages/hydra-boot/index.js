@@ -61,11 +61,11 @@ function createApp(serverConfig /*: AppConfig */) /*: HydraApp */ {
   })
 
   const bootWebpack = (webpackConfig /*: ?any */) => {
-    if (IS_PRODUCTION) {
+    if (!IS_PRODUCTION) {
       const webpack = require('webpack')
       const webpackDevMiddleware = require('webpack-dev-middleware')
       const webpackHotMiddleware = require('webpack-hot-middleware')
-      webpackConfig = webpackConfig || require('hydra-webpack-config')
+      webpackConfig = webpackConfig || require('hydra-webpack-config')()
 
       const compiler = webpack(webpackConfig)
       app.use(

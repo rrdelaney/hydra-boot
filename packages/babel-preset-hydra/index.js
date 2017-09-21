@@ -1,7 +1,7 @@
 module.exports = {
   plugins: [
     [
-      require('babel-plugin-styled-components'),
+      require('babel-plugin-styled-components').default,
       {
         ssr: true,
         minify: true

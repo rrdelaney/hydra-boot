@@ -1,27 +1,29 @@
 // @flow
 
-import type { Readable } from 'stream'
+/*:: import type { Readable } from 'stream' */
 
 const flush = { $flush: '$FLUSH' }
-opaque type Flush = typeof flush
 
+/*::
+opaque type Flush = typeof flush
 opaque type Handler = { $handler: (err: Error) => string }
-const handler = ($handler: (err: Error) => string): Handler => ({
-  $handler
-})
 
 type TemplateValue = Readable | Flush | Handler | Error | string
 type Locals<T> = { [prop: $Keys<T>]: Promise<T> }
-
 type Emitable = (cb: (data: string) => void) => Promise<void>
+*/
+
+function handler($handler /*: (err: Error) => string */) /*: Handler */ {
+  return { $handler }
+}
 
 function render(
-  templateParts: string[],
-  ...values: Array<TemplateValue | Promise<TemplateValue>>
-): Emitable {
-  let renderError: ?Error = null
+  templateParts /*: string[] */,
+  ...values /*: Array<TemplateValue | Promise<TemplateValue>> */
+) /*: Emitable */ {
+  let renderError /*: ?Error */ = null
   let buffer = ''
-  const parts: Array<TemplateValue | Promise<TemplateValue>> = []
+  const parts /*: Array<TemplateValue | Promise<TemplateValue>> */ = []
 
   for (let i = 0; i < templateParts.length; ++i) {
     parts.push(templateParts[i])
@@ -31,7 +33,7 @@ function render(
   return async cb => {
     for (let part of parts) {
       try {
-        const data: TemplateValue = await part
+        const data /*: TemplateValue */ = await part
         if (data === undefined || data === null) continue
 
         if (data instanceof Error) {
@@ -67,25 +69,29 @@ function render(
   }
 }
 
+/*::
 type RenderableProps<T> = {
   render: typeof render,
   locals: Locals<T>,
   flush: Flush,
   handler: typeof handler
 }
+*/
 
-export default class RenderStream<T> {
+class RenderStream /*:: <T> */ {
+  /*::
   renderer: Emitable
+  */
 
-  callbacks: {
+  callbacks /*: {
     end: Array<() => void>,
     data: Array<(data: string) => void>
-  } = {
+  } */ = {
     end: [],
     data: []
   }
 
-  localsResolvers: { [prop: string]: () => void } = {}
+  localsResolvers /*: { [prop: string]: () => void } */ = {}
 
   locals = new Proxy(
     {},
@@ -100,7 +106,7 @@ export default class RenderStream<T> {
     }
   )
 
-  constructor(renderFn: (props: RenderableProps<T>) => Emitable) {
+  constructor(renderFn /*: (props: RenderableProps<T>) => Emitable */) {
     this.renderer = renderFn({ render, handler, flush, locals: this.locals })
   }
 
@@ -112,7 +118,7 @@ export default class RenderStream<T> {
     })
   }
 
-  push(obj: $Shape<Locals<T>>) {
+  push(obj /*: $Shape<Locals<T>> */) {
     Object.entries(obj).forEach(([name, value]) => {
       this.locals[name] = Promise.resolve(value)
 
@@ -120,9 +126,11 @@ export default class RenderStream<T> {
     })
   }
 
-  on(event: string, cb: (data: string) => void) {
+  on(event /*: string */, cb /*: (data: string) => void */) {
     if (!this.callbacks[event]) this.callbacks[event] = []
 
     this.callbacks[event].push(cb)
   }
 }
+
+module.exports = RenderStream
