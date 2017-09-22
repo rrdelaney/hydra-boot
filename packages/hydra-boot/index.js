@@ -20,7 +20,8 @@ type AppConfig = () => {
    req: $Request,
    res: $Response,
    next: NextFunction
- ): Promise<void>
+ ): Promise<void>,
+ routes?: { [route: string]: Middleware }
 }
 
 type HydraApp = {
@@ -84,6 +85,22 @@ function createApp(serverConfig /*: AppConfig */) /*: HydraApp */ {
   }
 
   const start = () => {
+    const { routes } = serverConfig()
+
+    if (routes) {
+      Object.keys(routes).forEach(routeName => {
+        app.use(routeName, (...handler) => {
+          const { routes: _routes, handleError } = serverConfig()
+          if (!_routes) return
+          const handleRoute = _routes[routeName]
+
+          Promise.resolve(handleRoute(...handler)).catch(e => {
+            handleError(e, ...handler)
+          })
+        })
+      })
+    }
+
     app.use((...handler) => {
       const { handleRequest, handleError } = serverConfig()
 

@@ -6,7 +6,7 @@ import { getDataFromTree } from 'react-apollo'
 import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 import serialize from 'serialize-javascript'
 import type { $Request, $Response, NextFunction } from 'express'
-import { graphqlExpress } from 'apollo-server-express'
+import { graphqlExpress, graphiqlExpress } from 'apollo-server-express'
 import { StaticRouter } from 'react-router-dom'
 import log from 'hydra-log'
 import createPage from './page'
@@ -16,15 +16,6 @@ import Context from './api/context'
 import App from './components/App'
 import configureStore from './store'
 import { login } from './store/actions'
-
-export async function handleGraphQL(
-  ...handler: [$Request, $Response, NextFunction]
-) {
-  const [req] = handler
-  const context = new Context()
-
-  return graphqlExpress({ schema, context })(...handler)
-}
 
 export async function handleRequest(req: $Request, res: $Response) {
   const assets = getAssets(res)
@@ -86,6 +77,20 @@ export function handleError(
   log(err)
 
   return res.status(500).send(`Internal server error`)
+}
+
+export const routes = {
+  '/graphql': async function handleGraphQL(
+    ...handler: [$Request, $Response, NextFunction]
+  ) {
+    const [req] = handler
+    const context = new Context()
+
+    return graphqlExpress({ schema, context })(...handler)
+  },
+  '/graphiql': graphiqlExpress({
+    endpointURL: '/graphql'
+  })
 }
 
 function getAssets(res: any): string[] {
